@@ -7,7 +7,8 @@ exports.getProductos = (req, res) => {
             res.render('tienda/lista-productos', {
                 prods: productos,
                 titulo: "Productos de la tienda",
-                path: "/productos"
+                path: "/productos",
+                autenticado: req.session.autenticado
             });
 
         })
@@ -24,7 +25,8 @@ exports.getProducto = (req, res) => {
             res.render('tienda/detalle-producto', {
                 producto: producto,
                 titulo: producto.nombre,
-                path: '/productos'
+                path: '/productos',
+                autenticado: req.session.autenticado
             });
         })
         .catch(err => console.log(err));
@@ -36,9 +38,9 @@ exports.getIndex = (req, res) => {
             res.render('tienda/index', {
                 prods: productos,
                 titulo: "Pagina principal de la Tienda",
-                path: "/"
+                path: "/",
+                autenticado: req.session.autenticado
             });
-
         })
         .catch(err => console.log(err));
 }
@@ -48,11 +50,11 @@ exports.getCarrito = (req, res, next) => {
         .populate('carrito.items.idProducto')
         .then(usuario => {
             const productos = usuario.carrito.items;
-            //const productos = usuario.carrito.items.map(e => {... e.idProducto}, cantidad: e.cantidad);
             res.render('tienda/carrito', {
                 path: '/carrito',
                 titulo: 'Mi Carrito',
-                productos: productos
+                productos: productos,
+                autenticado: req.session.autenticado
             });
         })
         .catch(err => console.log(err));
@@ -88,7 +90,8 @@ exports.getPedidos = (req, res, next) => {
             res.render('tienda/pedidos', {
                 path: '/pedidos',
                 titulo: 'Mis Pedidos',
-                pedidos: pedidos
+                pedidos: pedidos,
+                autenticado: req.session.autenticado
             });
         })
         .catch(err => console.log(err));

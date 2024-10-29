@@ -35,12 +35,15 @@ app.use(session({ secret: 'algo muy secreto', resave: false, saveUninitialized: 
 
 
 app.use((req, res, next) => {
-    Usuario.findById('671c59f25e11c1a2041ed6ad')
-        .then(usuario => {
-            req.usuario = usuario;
-            next();
-        })
-        .catch(err => console.log(err));
+  if (!req.session.usuario) {
+    return next();
+  }
+  Usuario.findById(req.session.usuario._id)
+    .then(usuario => {
+        req.usuario = usuario;
+        next();
+    })
+    .catch(err => console.log(err));
 
 });
 
