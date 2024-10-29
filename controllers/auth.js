@@ -22,3 +22,10 @@ exports.postIngresar = (req, res, next) => {
       })
       .catch(err => console.log(err));
 };
+
+exports.postSalir = (req, res, next) => {
+  req.session.destroy(err => {
+    console.log(err);
+    res.redirect('/');
+  });
+};
