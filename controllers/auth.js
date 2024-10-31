@@ -2,6 +2,11 @@ const Usuario = require('../models/usuario')
 const bcrypt = require('bcryptjs');
 
 
+
+let esPasswordComplejo = (password) => {
+  return password.length > 7;
+}
+
 exports.getIngresar = (req, res, next) => {
     let mensaje = req.flash('error');
     if (mensaje.length > 0) {
@@ -67,7 +72,7 @@ exports.postRegistrarse = (req, res, next) => {
     req.flash('error', 'Debe usar el mismo password')
     res.redirect('/registrarse');
   }
-  if (evaluarComplejidadPassword(password)) {
+  if (!esPasswordComplejo(password)) {
     req.flash('error', 'El password debe tener longitud minima de 8 caracteres, letras y numeros....')
     res.redirect('/registrarse');
   }
@@ -101,8 +106,3 @@ exports.postSalir = (req, res, next) => {
     res.redirect('/');
   });
 };
-
-
-evaluarComplejidadPassword = (password) => {
-  return password.length > 7;
-}
