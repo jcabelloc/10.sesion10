@@ -3,11 +3,17 @@ const bcrypt = require('bcryptjs');
 
 
 exports.getIngresar = (req, res, next) => {
-    console.log(req.session.autenticado);
+    let mensaje = req.flash('error');
+    if (mensaje.length > 0) {
+      mensaje = mensaje[0];
+    } else {
+      mensaje = null;
+    }
     res.render('auth/ingresar', {
       path: '/ingresar',
       titulo: 'Ingresar',
-      autenticado: false
+      autenticado: false,
+      mensajeError: mensaje
     });
   };
 
@@ -17,7 +23,7 @@ exports.postIngresar = (req, res, next) => {
     Usuario.findOne({ email: email })
     .then(usuario => {
       if (!usuario) {
-        console.log('No hay dicho email')
+        req.flash('error', 'El usuario no existe')
         return res.redirect('/ingresar');
       }
       bcrypt.compare(password, usuario.password)
@@ -30,7 +36,7 @@ exports.postIngresar = (req, res, next) => {
               res.redirect('/')
             })
           }
-          console.log('password invalido')
+          req.flash('error', 'Las credenciales son invalidas')
           res.redirect('/ingresar');
         })
         .catch(err => console.log(err));
@@ -38,10 +44,17 @@ exports.postIngresar = (req, res, next) => {
 };
 
 exports.getRegistrarse = (req, res, next) => {
+  let mensaje = req.flash('error');
+  if (mensaje.length > 0) {
+    mensaje = mensaje[0];
+  } else {
+    mensaje = null;
+  }
   res.render('auth/registrarse', {
     path: '/registrarse',
     titulo: 'Registrarse',
-    autenticado: false
+    autenticado: false,
+    mensajeError: mensaje
   });
 };
 
@@ -52,6 +65,7 @@ exports.postRegistrarse = (req, res, next) => {
   Usuario.findOne({ email: email })
     .then(usuarioDoc => {
       if (usuarioDoc) {
+        req.flash('error', 'Dicho email ya esta en uso')
         return res.redirect('/registrarse');
       }
       return bcrypt.hash(password, 12)

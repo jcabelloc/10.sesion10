@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const csrf = require('csurf');
+const flash = require('connect-flash');
+
 
 
 const mongoose = require('mongoose');
@@ -38,6 +40,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'algo muy secreto', resave: false, saveUninitialized: false, store: store }));
 
 app.use(csrfProtection);
+app.use(flash());
+
 
 
 app.use((req, res, next) => {
