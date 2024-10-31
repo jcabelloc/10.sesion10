@@ -12,17 +12,29 @@ exports.getIngresar = (req, res, next) => {
   };
 
 exports.postIngresar = (req, res, next) => {
-    Usuario.findById('671c59f25e11c1a2041ed6ad')
-      .then(usuario => {
-        req.session.autenticado = true;
-        req.session.usuario = usuario;
-        req.session.save(err => {
-          console.log(err);
-          res.redirect('/')
+    const email = req.body.email;
+    const password = req.body.password;
+    Usuario.findOne({ email: email })
+    .then(usuario => {
+      if (!usuario) {
+        console.log('No hay dicho email')
+        return res.redirect('/ingresar');
+      }
+      bcrypt.compare(password, usuario.password)
+        .then(hayCoincidencia => {
+          if(hayCoincidencia) {
+            req.session.autenticado = true;
+            req.session.usuario = usuario;
+            return req.session.save(err => {
+              console.log(err);
+              res.redirect('/')
+            })
+          }
+          console.log('password invalido')
+          res.redirect('/ingresar');
         })
-
+        .catch(err => console.log(err));
       })
-      .catch(err => console.log(err));
 };
 
 exports.getRegistrarse = (req, res, next) => {
