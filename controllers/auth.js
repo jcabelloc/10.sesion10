@@ -62,6 +62,15 @@ exports.postRegistrarse = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const passwordConfirmado = req.body.passwordConfirmado;
+  
+  if (password !== passwordConfirmado) {
+    req.flash('error', 'Debe usar el mismo password')
+    res.redirect('/registrarse');
+  }
+  if (evaluarComplejidadPassword(password)) {
+    req.flash('error', 'El password debe tener longitud minima de 8 caracteres, letras y numeros....')
+    res.redirect('/registrarse');
+  }
   Usuario.findOne({ email: email })
     .then(usuarioDoc => {
       if (usuarioDoc) {
@@ -92,3 +101,8 @@ exports.postSalir = (req, res, next) => {
     res.redirect('/');
   });
 };
+
+
+evaluarComplejidadPassword = (password) => {
+  return password.length > 7;
+}
