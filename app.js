@@ -35,6 +35,7 @@ app.use(session({ secret: 'algo muy secreto', resave: false, saveUninitialized: 
 
 
 app.use((req, res, next) => {
+  console.log(req.session);
   if (!req.session.usuario) {
     return next();
   }
